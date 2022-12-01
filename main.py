@@ -18,12 +18,14 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(options=chrome_options)
 shadow = Shadow(driver)
 palavras = []
-palavrasIniciais = ["Aureo", "Indas"]
+palavrasIniciais = ["Aureo","Coisa"] #Indas
 palavrasPossiveis = []
 letrasErradas = []
 letrasCertas = {}
 letrasPosicionadasErradas = {}
 palavrasUsadas = []
+
+
 
 with open("palavras2.txt", mode="r") as file:
   for line in file.readlines():
@@ -40,7 +42,7 @@ for x in palavras:
 driver.get('https://term.ooo/')
 
 row = 1
-sleep(10)
+sleep(5)
 
 input_box = driver.find_element(By.TAG_NAME, "body")
 input_box.click()
@@ -51,7 +53,7 @@ def digitar(palavra=choice(palavrasIniciais)):
   input_box.send_keys(palavra)
   input_box.send_keys(Keys.ENTER)
 
-  sleep(3)
+  sleep(1)
 
 
 digitar()
@@ -101,7 +103,8 @@ def organizador():
       pos = x.get_attribute("lid")
       letrasPosicionadasErradas[unidecode.unidecode(x.text.lower())] = [pos]
 
-
+debug = True
+palavraDebug = "corpo"
 palavra = "     "
 
 palavras1 = []
@@ -109,13 +112,14 @@ palavras2 = []
 palavras3 = []
 palavras4 = []
 palavras5 = []
-palavrasPossiveis2 = []
 
 
-def EscolherPalavras(lCertas=letrasCertas,lErradas=letrasErradas,lPE=letrasPosicionadasErradas):
+def EscolherPalavras(lCertas=letrasCertas,
+                     lErradas=letrasErradas,
+                 lPE=letrasPosicionadasErradas):
   global row
   global palavra
-  #palavrasPossiveis2 = []
+  vogais = ['a','e','i','o','u']
 
   if len(lCertas) >= 1:
     for x, y in lCertas.items():
@@ -130,99 +134,130 @@ def EscolherPalavras(lCertas=letrasCertas,lErradas=letrasErradas,lPE=letrasPosic
 
   row += 1
   for p in palavrasPossiveis[:]:
-    etapa1 = False
-    etapa2 = False
-    etapa3 = False
-    etapa4 = False
-    etapa5 = False
-
-    if palavra[0] != " ":
-      if palavra[0] == p[0]:
-        etapa1 = True
-      pass
-    else:
-      if p[0] in letrasErradas:
-        pass
-      elif p[0] in letrasPosicionadasErradas and p[
-          0] in letrasPosicionadasErradas[p[0]]:
-        pass
-      else:
-        etapa1 = True
-
-    if palavra[1] != " ":
-      if palavra[1] == p[1]:
-        etapa2 = True
-      pass
-    else:
-      if p[1] in letrasErradas:
-        pass
-      elif p[0] in letrasPosicionadasErradas and 0 in letrasPosicionadasErradas[
-          p[0]]:
-        pass
-      else:
-        etapa2 = True
-
-    if palavra[2] != " ":
-      if palavra[0] == p[2]:
-        etapa3 = True
-      pass
-    else:
-      if p[2] in letrasErradas:
-        pass
-      elif p[1] in letrasPosicionadasErradas and 1 in letrasPosicionadasErradas[
-          p[1]]:
-        pass
-      else:
-        etapa3 = True
-
-    if palavra[3] != " ":
-      if palavra[3] == p[3]:
-        etapa4 = True
-      pass
-    else:
-      if p[3] in letrasErradas:
-        pass
-      elif p[2] in letrasPosicionadasErradas and 2 in letrasPosicionadasErradas[
-          p[2]]:
-        pass
-      else:
-        etapa4 = True
-
-    if palavra[4] != " ":
-      if palavra[4] == p[4]:
-        etapa5 = True
-      pass
-    else:
-      if p[4] in letrasErradas:
-        pass
-      elif p[3] in letrasPosicionadasErradas and 3 in letrasPosicionadasErradas[
-          p[3]]:
-        pass
-      else:
-        etapa5 = True
-    for x in letrasPosicionadasErradas:
-      if x not in p:
-        etapa5 = False
+    etapa1 = True
+    etapa2 = True
+    etapa3 = True
+    etapa4 = True
+    etapa5 = True
+    etapa6 = True
 
     if p in palavrasUsadas:
-      etapa5 = False
+      
+      etapa6 = False
 
-    if  etapa1 and etapa2 and etapa3 and etapa4 and etapa5:
-      if row == 2:
+    for x in lPE:
+      if x not in p:
+        if debug and p == palavraDebug:
+          print("Falhou no LPE")
+       
+        etapa6 = False
+
+    if p[1] == p[0] and p[1]  in vogais or p[2] == p[1] and p[2] in vogais or p[3] == p[2] and p[3] in vogais or p[4] == p[3] and p[4] in vogais:
+      etapa6 = False
+
+    for x in letrasCertas:
+      if x not in p:
+        if debug and p == palavraDebug:
+          print("Falhou no lC")
+          
+        etapa6 = False
+
+      else:
+        for y in letrasCertas[x]:
+          if int(y) not in findOccurrences(p,x):
+            if debug and p == palavraDebug:
+              print(y, findOccurrences(p,x))
+              print("Falhou no lC2")
+              
+            etapa6 = False
+
+    for x in p:
+      if x in letrasErradas and x not in letrasCertas:
+        if debug and p == palavraDebug:
+          print("Falhou no lE")
+        etapa6 = False
+        
+        
+
+    if palavra[0] != " ":
+      if p[0] != palavra[0]:
+        etapa1 = False
+      
+      
+    else:
+      if p[0] in lPE and 0 in lPE[p[0]]:
+        etapa1 = False
+      
+                  
+
+    if palavra[1] != " ":
+      if p[1] != palavra[1]:
+        etapa2 = False
+      
+      
+    else:
+      if p[1] in lPE and 1 in lPE[p[1]]:
+        etapa2 = False
+      
+
+
+    if palavra[2] != " ":
+      if p[2] != palavra[2]:
+        etapa3 == False
+      
+      
+    else:
+      if p[2] in lPE and 2 in lPE[p[2]]:
+        etapa3 = False 
+      
+
+    if palavra[3] != " ":
+      if p[3] != palavra[3]:
+        etapa4 = False
+      
+      
+    else:
+      if p[3] in lPE and 3 in lPE[p[3]]:
+        etapa4 = False
+      
+
+    if palavra[4] != " ":
+      if p[4] != palavra[4]:
+        etapa5 = False
+      
+      
+    else:
+      if p[4] in lPE and 4 in lPE[p[4]]:
+        etapa5 = False
+
+    
+                       
+    if p == palavraDebug and debug:
+      print(f"Palavra -> {p}")
+      print(f"Etapa 1 -> {etapa1}")
+      print(f"Etapa 2 -> {etapa2}")
+      print(f"Etapa 3 -> {etapa3}")
+      print(f"Etapa 4 -> {etapa4}")
+      print(f"Etapa 5 -> {etapa5}")
+      print(f"Etapa 6 -> {etapa6}")
+      print("--------------------------------------------")
+      
+
+    if  etapa1 == True and etapa2 == True and etapa3== True and etapa4 == True and etapa5 == True and etapa6 == True:
+      
+      if row ==2: 
+        
         palavras1.append(p)
-        pass
-      elif row == 3:
+       
+      elif row==3:
+        
         palavras2.append(p)
-        pass
-      elif row == 4:
+      elif row==4:
         palavras3.append(p)
-        pass
-      elif row == 5:
+      elif row==5:
         palavras4.append(p)
-        pass
-      elif row == 6:
+      elif row==6:
         palavras5.append(p)
-        pass
               
 
     
@@ -233,30 +268,42 @@ while row <= 5:
 
   wrong, right, place = scrapper()
   organizador()
-  print("Indo escolher ", row)
+
   EscolherPalavras()
+  
+  
 
-  print(len(palavras1))
-  print(len(palavras2))
-  print(len(palavras3))
-  print(len(palavras4))
-  print(len(palavras5))
+  
+
+  if row == 2:
+    p = choice(palavras1)
+    
+    digitar(p)
+    palavrasUsadas.append(p)
         
-  
-  
-  if row == 2 and len(palavras1) >= 1:
-    digitar(choice(palavras1))
-  elif row == 3 and len(palavras2) >= 1:
-    digitar(choice(palavras2))
-  elif row == 4 and len(palavras3) >= 1:
-    digitar(choice(palavras3))
-  elif row == 5 and len(palavras4) >= 1:
-    digitar(choice(palavras4))
-  elif row == 6 and len(palavras5) >= 1:
-    digitar(choice(palavras5))
-  
+  elif row == 3:
+    p = choice(palavras2)
+
+    digitar(p)
+    palavrasUsadas.append(p)
+        
+  elif row == 4:
+    p = choice(palavras3)
 
   
+    digitar(p)
+    palavrasUsadas.append(p)
+        
+  elif row == 5:
+    p = choice(palavras4)
+    digitar(p)
+    palavrasUsadas.append(p)
+        
+  elif row == 6:
+    p = choice(palavras5)
+    digitar(p)
+    palavrasUsadas.append(p)
+
     
   
       

@@ -782,7 +782,6 @@ borde
 bordo
 borra
 borre
-borro
 bossa
 bosta
 botai
@@ -5332,7 +5331,6 @@ vires
 viria
 viril
 viris
-virmo
 virou
 virus
 visai
