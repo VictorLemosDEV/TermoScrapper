@@ -109,13 +109,13 @@ palavras2 = []
 palavras3 = []
 palavras4 = []
 palavras5 = []
+palavrasPossiveis2 = []
 
 
-def EscolherPalavras(lCertas=letrasCertas,
-                     lErradas=letrasErradas,
-                     lPE=letrasPosicionadasErradas):
+def EscolherPalavras(lCertas=letrasCertas,lErradas=letrasErradas,lPE=letrasPosicionadasErradas):
   global row
   global palavra
+  #palavrasPossiveis2 = []
 
   if len(lCertas) >= 1:
     for x, y in lCertas.items():
@@ -208,19 +208,21 @@ def EscolherPalavras(lCertas=letrasCertas,
       etapa5 = False
 
     if  etapa1 and etapa2 and etapa3 and etapa4 and etapa5:
-      if row ==2: 
-        
+      if row == 2:
         palavras1.append(p)
-       
-      elif row==3:
-        print(p)
+        pass
+      elif row == 3:
         palavras2.append(p)
-      elif row==4:
+        pass
+      elif row == 4:
         palavras3.append(p)
-      elif row==5:
+        pass
+      elif row == 5:
         palavras4.append(p)
-      elif row==6:
+        pass
+      elif row == 6:
         palavras5.append(p)
+        pass
               
 
     
@@ -231,29 +233,30 @@ while row <= 5:
 
   wrong, right, place = scrapper()
   organizador()
-
+  print("Indo escolher ", row)
   EscolherPalavras()
 
-  retries = 0
-
-  if row == 2:
+  print(len(palavras1))
+  print(len(palavras2))
+  print(len(palavras3))
+  print(len(palavras4))
+  print(len(palavras5))
         
-
+  
+  
+  if row == 2 and len(palavras1) >= 1:
     digitar(choice(palavras1))
-        
-  elif row == 3:
-
+  elif row == 3 and len(palavras2) >= 1:
     digitar(choice(palavras2))
-        
-  elif row == 4:
+  elif row == 4 and len(palavras3) >= 1:
     digitar(choice(palavras3))
-        
-  elif row == 5:
+  elif row == 5 and len(palavras4) >= 1:
     digitar(choice(palavras4))
-        
-  elif row == 6:
+  elif row == 6 and len(palavras5) >= 1:
     digitar(choice(palavras5))
+  
 
+  
     
   
       
