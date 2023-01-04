@@ -9,6 +9,8 @@ from pyshadow.main import Shadow
 from random import choice
 from time import sleep
 
+import json
+
 import unidecode
 
 chrome_options = Options()
@@ -25,7 +27,11 @@ letrasCertas = {}
 letrasPosicionadasErradas = {}
 palavrasUsadas = []
 
+config = {} #Configurações
 
+with open("config.json", mode="r") as file:
+  config = json.loads(file.read())
+  
 
 with open("palavras2.txt", mode="r") as file:
   for line in file.readlines():
@@ -48,10 +54,23 @@ input_box = driver.find_element(By.TAG_NAME, "body")
 input_box.click()
 
 
-def digitar(palavra=choice(palavrasIniciais)):
+def digitar(palavra=palavrasIniciais):
 
-  input_box.send_keys(palavra)
-  input_box.send_keys(Keys.ENTER)
+  if palavra == palavrasIniciais:
+    palavra = choice(palavra)
+    print(f"Palavra inicial é {palavra}")
+  
+  if config["WaitForEnter"] == True:
+    input("Press enter to submit word!")
+    input_box.send_keys(palavra)
+    input_box.send_keys(Keys.ENTER)
+  else:
+    input_box.send_keys(palavra)
+    input_box.send_keys(Keys.ENTER)
+    
+  
+
+  
 
   sleep(1)
 
@@ -104,7 +123,7 @@ def organizador():
       letrasPosicionadasErradas[unidecode.unidecode(x.text.lower())] = [pos]
 
 debug = True
-palavraDebug = "corpo"
+palavraDebug = "vulva"
 palavra = "     "
 
 palavras1 = []
@@ -120,6 +139,7 @@ def EscolherPalavras(lCertas=letrasCertas,
   global row
   global palavra
   vogais = ['a','e','i','o','u']
+  
 
   if len(lCertas) >= 1:
     for x, y in lCertas.items():
@@ -161,6 +181,7 @@ def EscolherPalavras(lCertas=letrasCertas,
           print("Falhou no lC")
           
         etapa6 = False
+        
 
       else:
         for y in letrasCertas[x]:
@@ -176,6 +197,14 @@ def EscolherPalavras(lCertas=letrasCertas,
         if debug and p == palavraDebug:
           print("Falhou no lE")
         etapa6 = False
+
+
+    for x in p:
+      for y in lPE:
+        for z in y:
+          if z in findOccurrences(p,x):
+            etapa6 = False
+            
         
         
 
@@ -270,6 +299,7 @@ while row <= 5:
   organizador()
 
   EscolherPalavras()
+
   
   
 
@@ -277,18 +307,24 @@ while row <= 5:
 
   if row == 2:
     p = choice(palavras1)
+    if config["PrintChosenWord"] == True:
+      print(f"Palavra escolhida foi {p}")
     
     digitar(p)
     palavrasUsadas.append(p)
         
   elif row == 3:
     p = choice(palavras2)
+    if config["PrintChosenWord"] == True:
+      print(f"Palavra escolhida foi {p}")
 
     digitar(p)
     palavrasUsadas.append(p)
         
   elif row == 4:
     p = choice(palavras3)
+    if config["PrintChosenWord"] == True:
+      print(f"Palavra escolhida foi {p}")
 
   
     digitar(p)
@@ -296,11 +332,17 @@ while row <= 5:
         
   elif row == 5:
     p = choice(palavras4)
+    if config["PrintChosenWord"] == True:
+      print(f"Palavra escolhida foi {p}")
+      
     digitar(p)
     palavrasUsadas.append(p)
         
   elif row == 6:
     p = choice(palavras5)
+    if config["PrintChosenWord"] == True:
+      print(f"Palavra escolhida foi {p}")
+      
     digitar(p)
     palavrasUsadas.append(p)
 
